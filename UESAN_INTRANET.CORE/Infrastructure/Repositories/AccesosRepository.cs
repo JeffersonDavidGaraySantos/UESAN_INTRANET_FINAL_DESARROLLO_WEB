@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UESAN_INTRANET.CORE.Core.Entities;
+using UESAN_INTRANET.CORE.Core.Interfaces;
 using UESAN_INTRANET.CORE.Infrastructure.Data;
 
 namespace UESAN_INTRANET.CORE.Infrastructure.Repositories
 {
-    public class AccesosRepository
+    public class AccesosRepository : IAccesosRepository
     {
 
         private readonly VdiIntranet2Context _context;
@@ -18,9 +20,9 @@ namespace UESAN_INTRANET.CORE.Infrastructure.Repositories
         }
 
         //get all accesos
-        public IEnumerable<Accesos> GetAllAccesos()
+        public async Task<IEnumerable<Accesos>> GetAllAccesosAsync()
         {
-            return _context.Accesos.ToList();
+            return await _context.Accesos.ToListAsync();
         }
 
         // Get access by id async
@@ -52,15 +54,15 @@ namespace UESAN_INTRANET.CORE.Infrastructure.Repositories
         //update access async
         public async Task<Accesos?> UpdateAccesoAsync(Accesos acceso)
         {
-            var existingAcceso = await _context.Accesos.FindAsync(acceso.AccesoId);
-            if (existingAcceso == null)
+            var exists = await _context.Accesos.AnyAsync(a => a.AccesoId == acceso.AccesoId);
+            if (!exists)
             {
                 return null;
             }
-            existingAcceso.UsuarioId = acceso.UsuarioId;
-            existingAcceso.FechaHoraAcceso = acceso.FechaHoraAcceso;
+
+            _context.Accesos.Update(acceso);
             await _context.SaveChangesAsync();
-            return existingAcceso;
+            return acceso;
         }
 
 
