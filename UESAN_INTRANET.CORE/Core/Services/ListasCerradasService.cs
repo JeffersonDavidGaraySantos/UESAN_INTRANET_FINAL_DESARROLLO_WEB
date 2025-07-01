@@ -9,7 +9,7 @@ using UESAN_INTRANET.CORE.Core.Interfaces;
 
 namespace UESAN_INTRANET.CORE.Core.Services
 {
-    public class ListasCerradasService
+    public class ListasCerradasService : IListasCerradasService
     {
         private readonly IListasCerradasRepository _repository;
 

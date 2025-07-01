@@ -9,7 +9,7 @@ using UESAN_INTRANET.CORE.Core.Interfaces;
 
 namespace UESAN_INTRANET.CORE.Core.Services
 {
-    public class IssnConsultaService
+    public class IssnConsultaService : IIssnConsultaService
     {
         private readonly IIssnConsultaRepository _repository;
 

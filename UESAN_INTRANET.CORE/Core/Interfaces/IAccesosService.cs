@@ -1,6 +1,6 @@
 ﻿using UESAN_INTRANET.CORE.Core.DTOs;
 
-namespace UESAN_INTRANET.CORE.Core.Services
+namespace UESAN_INTRANET.CORE.Core.Interfaces
 {
     public interface IAccesosService
     {

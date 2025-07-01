@@ -9,7 +9,7 @@ using UESAN_INTRANET.CORE.Core.Interfaces;
 
 namespace UESAN_INTRANET.CORE.Core.Services
 {
-    public class CategoriasService
+    public class CategoriasService : ICategoriasService
     {
         private readonly ICategoriasRepository _categoriasRepository;
 

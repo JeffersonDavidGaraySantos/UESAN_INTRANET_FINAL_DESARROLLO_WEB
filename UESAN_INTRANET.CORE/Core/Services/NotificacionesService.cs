@@ -9,7 +9,7 @@ using UESAN_INTRANET.CORE.Core.Interfaces;
 
 namespace UESAN_INTRANET.CORE.Core.Services
 {
-    public class NotificacionesService
+    public class NotificacionesService : INotificacionesService
     {
         private readonly INotificacionesRepository _notificacionesRepository;
 

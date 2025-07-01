@@ -9,7 +9,7 @@ using UESAN_INTRANET.CORE.Core.Interfaces;
 
 namespace UESAN_INTRANET.CORE.Core.Services
 {
-    public class AccesosFormularioProfesoresService
+    public class AccesosFormularioProfesoresService : IAccesosFormularioProfesoresService
     {
         private readonly IAccesosFormularioProfesoresRepository _repository;
 

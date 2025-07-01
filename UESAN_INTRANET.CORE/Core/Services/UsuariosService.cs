@@ -9,7 +9,7 @@ using UESAN_INTRANET.CORE.Core.Interfaces;
 
 namespace UESAN_INTRANET.CORE.Core.Services
 {
-    public class UsuariosService
+    public class UsuariosService : IUsuariosService
     {
         private readonly IUsuariosRepository _usuariosRepository;
 
