@@ -7,11 +7,11 @@ namespace UESAN_INTRANET.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolesController : ControllerBase
+    public class RolController : ControllerBase
     {
-        private readonly IRolesRepository _rolesRepository;
+        private readonly IRolRepository _rolesRepository;
 
-        public RolesController(IRolesRepository rolesRepository)
+        public RolController(IRolRepository rolesRepository)
         {
             _rolesRepository = rolesRepository;
         }
@@ -38,7 +38,7 @@ namespace UESAN_INTRANET.API.Controllers
 
         // POST: api/Roles
         [HttpPost]
-        public async Task<IActionResult> PostRol([FromBody] Roles rol)
+        public async Task<IActionResult> PostRol([FromBody] Rol rol)
         {
             if (rol == null)
             {
@@ -56,7 +56,7 @@ namespace UESAN_INTRANET.API.Controllers
 
         // PUT: api/Roles/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRol(int id, [FromBody] Roles rol)
+        public async Task<IActionResult> PutRol(int id, [FromBody] Rol rol)
         {
             if (rol == null || id != rol.RolId)
             {

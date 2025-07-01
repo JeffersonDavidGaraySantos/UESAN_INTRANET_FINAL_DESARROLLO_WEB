@@ -29,5 +29,5 @@ public partial class Usuarios
 
     public virtual ICollection<Notificaciones> Notificaciones { get; set; } = new List<Notificaciones>();
 
-    public virtual Roles Rol { get; set; } = null!;
+    public virtual Rol Rol { get; set; } = null!;
 }

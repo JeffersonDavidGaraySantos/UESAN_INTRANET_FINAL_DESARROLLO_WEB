@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace UESAN_INTRANET.CORE.Core.Entities;
 
-public partial class Roles
+public partial class Rol
 {
     public int RolId { get; set; }
 
