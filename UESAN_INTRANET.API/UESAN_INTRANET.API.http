@@ -1,0 +1,6 @@
+@UESAN_INTRANET.API_HostAddress = http://localhost:5275
+
+GET {{UESAN_INTRANET.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
