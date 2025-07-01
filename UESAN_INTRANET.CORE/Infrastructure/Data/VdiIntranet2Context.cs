@@ -34,7 +34,7 @@ public partial class VdiIntranet2Context : DbContext
 
     public virtual DbSet<Notificaciones> Notificaciones { get; set; }
 
-    public virtual DbSet<Roles> Roles { get; set; }
+    public virtual DbSet<Rol> Roles { get; set; }
 
     public virtual DbSet<Usuarios> Usuarios { get; set; }
 
@@ -329,7 +329,7 @@ public partial class VdiIntranet2Context : DbContext
                 .HasConstraintName("FK__Notificac__Usuar__4316F928");
         });
 
-        modelBuilder.Entity<Roles>(entity =>
+        modelBuilder.Entity<Rol>(entity =>
         {
             entity.HasKey(e => e.RolId).HasName("PK__Roles__F92302D14F029789");
 

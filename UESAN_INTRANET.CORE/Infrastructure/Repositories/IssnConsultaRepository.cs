@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UESAN_INTRANET.CORE.Core.Entities;
+using UESAN_INTRANET.CORE.Core.Interfaces;
 using UESAN_INTRANET.CORE.Infrastructure.Data;
 
-namespace UESAN_INTRANET.CORE.Core.Interfaces
+namespace UESAN_INTRANET.CORE.Infrastructure.Repositories
 {
-    public class IssnConsultaRepository
+    public class IssnConsultaRepository : IIssnConsultaRepository
     {
         private readonly VdiIntranet2Context _context;
         public IssnConsultaRepository(VdiIntranet2Context context)

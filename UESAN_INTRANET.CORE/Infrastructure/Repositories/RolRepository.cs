@@ -8,29 +8,29 @@ using UESAN_INTRANET.CORE.Infrastructure.Data;
 
 namespace UESAN_INTRANET.CORE.Infrastructure.Repositories
 {
-    public class RolesRepository : IRolesRepository
+    public class RolRepository : IRolRepository
     {
         private readonly VdiIntranet2Context _context;
-        public RolesRepository(VdiIntranet2Context context)
+        public RolRepository(VdiIntranet2Context context)
         {
             _context = context;
         }
 
-        public async Task<IEnumerable<Roles>> GetAllAsync()
+        public async Task<IEnumerable<Rol>> GetAllAsync()
         {
             return await _context.Roles
                 .AsNoTracking()
                 .ToListAsync();
         }
 
-        public async Task<Roles?> GetByIdAsync(int id)
+        public async Task<Rol?> GetByIdAsync(int id)
         {
             return await _context.Roles
                 .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.RolId == id);
         }
 
-        public async Task<Roles> CreateAsync(Roles entity)
+        public async Task<Rol> CreateAsync(Rol entity)
         {
             if (entity == null)
             {
@@ -55,7 +55,7 @@ namespace UESAN_INTRANET.CORE.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<Roles?> UpdateAsync(Roles entity)
+        public async Task<Rol?> UpdateAsync(Rol entity)
         {
             if (entity == null)
             {
