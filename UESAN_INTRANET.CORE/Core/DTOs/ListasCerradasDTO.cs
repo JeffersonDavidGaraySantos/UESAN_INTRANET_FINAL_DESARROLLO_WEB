@@ -21,7 +21,7 @@ namespace UESAN_INTRANET.CORE.Core.DTOs
         public string? EsciQ { get; set; }
         public string? Ajg { get; set; }
         public string? Cnrs { get; set; }
-        public int? Abdc { get; set; }
+        public string? Abdc { get; set; }
         public string? WoSLatam { get; set; }
     }
 }
