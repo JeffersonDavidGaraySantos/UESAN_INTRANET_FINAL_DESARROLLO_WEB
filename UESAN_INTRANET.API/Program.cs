@@ -42,13 +42,21 @@ builder.Services.AddScoped<IIssnConsultaService, IssnConsultaService>();
 builder.Services.AddScoped<IAccesosFormularioProfesoresRepository, AccesosFormularioProfesoresRepository>();
 builder.Services.AddScoped<IAccesosFormularioProfesoresService, AccesosFormularioProfesoresService>();
 
-
-
+// --------------------- CORS CONFIG ---------------------
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost9000",
+        policy => policy
+            .WithOrigins("http://localhost:9000")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+    );
+});
+// -------------------------------------------------------
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -60,6 +68,10 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+// --------------------- CORS MIDDLEWARE -----------------
+app.UseCors("AllowLocalhost9000");
+// -------------------------------------------------------
 
 app.UseAuthorization();
 
