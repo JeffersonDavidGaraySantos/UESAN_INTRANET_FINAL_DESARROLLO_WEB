@@ -40,18 +40,28 @@ namespace UESAN_INTRANET.API.Controllers
         [HttpPost]
         public async Task<IActionResult> PostUsuario([FromBody] Usuarios usuario)
         {
-            if (usuario == null)
+            try
             {
-                return BadRequest("Usuario cannot be null");
-            }
+                if (usuario == null)
+                {
+                    return BadRequest("Usuario cannot be null");
+                }
 
-            if (!ModelState.IsValid)
+                if (!ModelState.IsValid)
+                {
+                    // Devuelve los errores de validación
+                    return BadRequest(ModelState);
+                }
+
+                var createdUsuario = await _usuariosRepository.CreateAsync(usuario);
+                return CreatedAtAction(nameof(GetUsuario), new { id = createdUsuario.UsuarioId }, createdUsuario);
+            }
+            catch (Exception ex)
             {
-                return BadRequest(ModelState);
+                // Loguea el error en consola
+                Console.WriteLine("Error al registrar usuario: " + ex.Message);
+                return StatusCode(500, "Error interno del servidor: " + ex.Message);
             }
-
-            var createdUsuario = await _usuariosRepository.CreateAsync(usuario);
-            return CreatedAtAction(nameof(GetUsuario), new { id = createdUsuario.UsuarioId }, createdUsuario);
         }
 
         // PUT: api/Usuarios/5
@@ -95,5 +105,43 @@ namespace UESAN_INTRANET.API.Controllers
 
             return NoContent();
         }
+
+        // ===================== LOGIN (SIGNIN) =====================
+        // POST: api/Usuarios/signin
+        [HttpPost("signin")]
+        public async Task<IActionResult> SignIn([FromBody] LoginRequest request)
+        {
+            if (request == null || string.IsNullOrEmpty(request.Correo) || string.IsNullOrEmpty(request.Contraseña))
+                return BadRequest(new { message = "Correo y contraseña requeridos." });
+
+            // Busca el usuario por correo y contraseña (ajusta según tu lógica real)
+            var usuarios = await _usuariosRepository.GetAllAsync();
+            var usuario = usuarios.FirstOrDefault(u =>
+                u.Correo == request.Correo && u.Contraseña == request.Contraseña);
+
+            if (usuario == null)
+                return Unauthorized(new { message = "Credenciales inválidas." });
+
+            // Puedes devolver solo los datos necesarios (no la contraseña)
+            return Ok(new
+            {
+                usuario.UsuarioId,
+                usuario.Nombre,
+                usuario.Apellido,
+                usuario.Correo,
+                usuario.RolId,
+                usuario.Estado,
+                usuario.FechaRegistro,
+                token = "fake-token" // Aquí deberías generar un JWT real si lo necesitas
+            });
+        }
+
+        // Clase auxiliar para el login
+        public class LoginRequest
+        {
+            public string Correo { get; set; }
+            public string Contraseña { get; set; }
+        }
+        // ==========================================================
     }
 }
