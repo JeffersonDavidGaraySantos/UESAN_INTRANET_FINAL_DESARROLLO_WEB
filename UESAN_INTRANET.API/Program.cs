@@ -12,6 +12,9 @@ var connectionString = builder.Configuration.GetConnectionString("DevConnection"
 builder.Services.AddDbContext<VdiIntranet2Context>(options => options.UseSqlServer(connectionString));
 
 //TODO: Add interfaces
+builder.Services.AddScoped<IPropuestasRepository, PropuestasRepository>();
+builder.Services.AddScoped<PropuestasService>();
+
 builder.Services.AddScoped<IAccesosRepository, AccesosRepository>();
 builder.Services.AddScoped<IAccesosService, AccesosService>();
 

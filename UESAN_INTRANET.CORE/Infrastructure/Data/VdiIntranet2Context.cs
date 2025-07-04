@@ -38,9 +38,12 @@ public partial class VdiIntranet2Context : DbContext
 
     public virtual DbSet<Usuarios> Usuarios { get; set; }
 
+    public virtual DbSet<Propuestas> Propuestas { get; set; }
+
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-LG15NKV;Database=VDI_Intranet_2;Integrated Security=True;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Server=JEFFFERSON;Database=VDI_Intranet_2;Integrated Security=True;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -58,6 +61,8 @@ public partial class VdiIntranet2Context : DbContext
                 .HasForeignKey(d => d.UsuarioId)
                 .HasConstraintName("FK__Accesos__Usuario__2D27B809");
         });
+
+
 
         modelBuilder.Entity<AccesosFormularioProfesores>(entity =>
         {
@@ -359,6 +364,30 @@ public partial class VdiIntranet2Context : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Usuarios__RolID__29572725");
         });
+
+        modelBuilder.Entity<Propuestas>(entity =>
+        {
+            entity.HasKey(e => e.PropuestaId).HasName("PK__Propuest__B0A1F2C3D5E8F4B6");
+            entity.Property(e => e.PropuestaId).HasColumnName("PropuestaID");
+            entity.Property(e => e.UsuarioId).HasColumnName("UsuarioID");
+            entity.Property(e => e.CategoriaId).HasColumnName("CategoriaID");
+            entity.Property(e => e.Tema)
+                .HasMaxLength(255);
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(1000);
+            entity.Property(e => e.Incentivo)
+                .HasMaxLength(255);
+            entity.HasOne(d => d.Usuario)
+                .WithMany(p => p.Propuestas)
+                .HasForeignKey(d => d.UsuarioId)
+                .HasConstraintName("FK__Propuestas__UsuarioID");
+
+            entity.HasOne(d => d.Categoria)
+                .WithMany(p => p.Propuestas)
+                .HasForeignKey(d => d.CategoriaId)
+                .HasConstraintName("FK__Propuestas__CategoriaID");
+        });
+
 
         OnModelCreatingPartial(modelBuilder);
     }
