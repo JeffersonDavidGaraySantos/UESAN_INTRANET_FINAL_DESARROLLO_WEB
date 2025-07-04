@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using UESAN_INTRANET.CORE.Core.Entities;
 using UESAN_INTRANET.CORE.Core.Interfaces;
+using System.Net.Mail;
+using System.Net;
 
 namespace UESAN_INTRANET.API.Controllers
 {
@@ -10,6 +12,8 @@ namespace UESAN_INTRANET.API.Controllers
     public class UsuariosController : ControllerBase
     {
         private readonly IUsuariosRepository _usuariosRepository;
+        // Simulación de almacenamiento de códigos (en producción usa BD o caché)
+        private static Dictionary<string, string> recoveryCodes = new();
 
         public UsuariosController(IUsuariosRepository usuariosRepository)
         {
@@ -49,7 +53,6 @@ namespace UESAN_INTRANET.API.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    // Devuelve los errores de validación
                     return BadRequest(ModelState);
                 }
 
@@ -58,7 +61,6 @@ namespace UESAN_INTRANET.API.Controllers
             }
             catch (Exception ex)
             {
-                // Loguea el error en consola
                 Console.WriteLine("Error al registrar usuario: " + ex.Message);
                 return StatusCode(500, "Error interno del servidor: " + ex.Message);
             }
@@ -114,7 +116,6 @@ namespace UESAN_INTRANET.API.Controllers
             if (request == null || string.IsNullOrEmpty(request.Correo) || string.IsNullOrEmpty(request.Contraseña))
                 return BadRequest(new { message = "Correo y contraseña requeridos." });
 
-            // Busca el usuario por correo y contraseña (ajusta según tu lógica real)
             var usuarios = await _usuariosRepository.GetAllAsync();
             var usuario = usuarios.FirstOrDefault(u =>
                 u.Correo == request.Correo && u.Contraseña == request.Contraseña);
@@ -122,7 +123,6 @@ namespace UESAN_INTRANET.API.Controllers
             if (usuario == null)
                 return Unauthorized(new { message = "Credenciales inválidas." });
 
-            // Puedes devolver solo los datos necesarios (no la contraseña)
             return Ok(new
             {
                 usuario.UsuarioId,
@@ -132,16 +132,118 @@ namespace UESAN_INTRANET.API.Controllers
                 usuario.RolId,
                 usuario.Estado,
                 usuario.FechaRegistro,
-                token = "fake-token" // Aquí deberías generar un JWT real si lo necesitas
+                token = "fake-token"
             });
         }
 
-        // Clase auxiliar para el login
         public class LoginRequest
         {
             public string Correo { get; set; }
             public string Contraseña { get; set; }
         }
         // ==========================================================
+
+        // ========== RECUPERACIÓN DE CONTRASEÑA ==========
+
+        // POST: api/Usuarios/forgot-password
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Correo))
+                return BadRequest(new { message = "Correo requerido." });
+
+            var usuarios = await _usuariosRepository.GetAllAsync();
+            var usuario = usuarios.FirstOrDefault(u => u.Correo == request.Correo);
+            if (usuario == null)
+                return NotFound(new { message = "Usuario no encontrado." });
+
+            // Generar código aleatorio
+            var code = new Random().Next(100000, 999999).ToString();
+            recoveryCodes[request.Correo] = code;
+
+            // Enviar correo (aquí puedes usar tu propio servicio SMTP)
+            try
+            {
+                // Simulación: imprime el código en consola
+                Console.WriteLine($"Código de recuperación para {request.Correo}: {code}");
+
+                // Si tienes SMTP, descomenta y configura esto:
+                /*
+                var smtpClient = new SmtpClient("smtp.tuservidor.com")
+                {
+                    Port = 587,
+                    Credentials = new NetworkCredential("usuario", "contraseña"),
+                    EnableSsl = true,
+                };
+                smtpClient.Send("no-reply@tudominio.com", request.Correo, "Recuperación de contraseña", $"Tu código es: {code}");
+                */
+
+                return Ok(new { message = "Código enviado a tu correo." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error enviando el correo: " + ex.Message });
+            }
+        }
+
+        public class ForgotPasswordRequest
+        {
+            public string Correo { get; set; }
+        }
+
+        // POST: api/Usuarios/verify-code
+        [HttpPost("verify-code")]
+        public IActionResult VerifyCode([FromBody] VerifyCodeRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Correo) || string.IsNullOrEmpty(request.Codigo))
+                return BadRequest(new { message = "Correo y código requeridos." });
+
+            if (recoveryCodes.TryGetValue(request.Correo, out var code) && code == request.Codigo)
+            {
+                return Ok(new { message = "Código verificado." });
+            }
+            else
+            {
+                return BadRequest(new { message = "Código incorrecto." });
+            }
+        }
+
+        public class VerifyCodeRequest
+        {
+            public string Correo { get; set; }
+            public string Codigo { get; set; }
+        }
+
+        // POST: api/Usuarios/reset-password
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Correo) || string.IsNullOrEmpty(request.Codigo) || string.IsNullOrEmpty(request.NuevaContrasena))
+                return BadRequest(new { message = "Datos incompletos." });
+
+            if (!recoveryCodes.TryGetValue(request.Correo, out var code) || code != request.Codigo)
+                return BadRequest(new { message = "Código inválido." });
+
+            var usuarios = await _usuariosRepository.GetAllAsync();
+            var usuario = usuarios.FirstOrDefault(u => u.Correo == request.Correo);
+            if (usuario == null)
+                return NotFound(new { message = "Usuario no encontrado." });
+
+            usuario.Contraseña = request.NuevaContrasena;
+            await _usuariosRepository.UpdateAsync(usuario);
+
+            // Elimina el código usado
+            recoveryCodes.Remove(request.Correo);
+
+            return Ok(new { message = "Contraseña actualizada." });
+        }
+
+        public class ResetPasswordRequest
+        {
+            public string Correo { get; set; }
+            public string Codigo { get; set; }
+            public string NuevaContrasena { get; set; }
+        }
+        // ================================================
     }
 }
