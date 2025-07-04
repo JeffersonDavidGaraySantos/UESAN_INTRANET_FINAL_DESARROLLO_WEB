@@ -75,5 +75,21 @@ namespace UESAN_INTRANET.CORE.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return existing;
         }
+
+        // IMPLEMENTACIÓN SOLICITADA
+        public async Task<bool> DeleteByUsuarioYRevistaAsync(int usuarioId, int listasCerradasId)
+        {
+            var entity = await _context.ListasCerradasGuardadas
+                .FirstOrDefaultAsync(x => x.UsuarioId == usuarioId && x.ListasCerradasId == listasCerradasId);
+
+            if (entity == null)
+            {
+                return false;
+            }
+
+            _context.ListasCerradasGuardadas.Remove(entity);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

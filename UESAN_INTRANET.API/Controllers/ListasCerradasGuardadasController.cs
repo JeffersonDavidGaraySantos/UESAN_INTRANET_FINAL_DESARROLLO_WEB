@@ -95,5 +95,20 @@ namespace UESAN_INTRANET.API.Controllers
 
             return NoContent();
         }
+
+
+        // DELETE: api/ListasCerradasGuardadas/{usuarioId}/{listasCerradasId}
+        [HttpDelete("{usuarioId}/{listasCerradasId}")]
+        public async Task<IActionResult> DeleteByUsuarioYRevista(int usuarioId, int listasCerradasId)
+        {
+            var deleted = await _listasCerradasGuardadasRepository.DeleteByUsuarioYRevistaAsync(usuarioId, listasCerradasId);
+            if (!deleted)
+                return NotFound();
+            return NoContent();
+        }
+
+
+
+
     }
 }
