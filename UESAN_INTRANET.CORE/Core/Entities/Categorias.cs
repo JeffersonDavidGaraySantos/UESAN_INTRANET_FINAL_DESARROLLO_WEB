@@ -10,4 +10,6 @@ public partial class Categorias
     public string NombreCategoria { get; set; } = null!;
 
     public virtual ICollection<ListasCerradas> ListasCerradas { get; set; } = new List<ListasCerradas>();
+    public virtual ICollection<Propuestas> Propuestas { get; set; } = new List<Propuestas>();
+
 }

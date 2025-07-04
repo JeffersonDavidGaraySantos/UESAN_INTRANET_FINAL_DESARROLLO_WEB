@@ -19,6 +19,8 @@ public partial class Usuarios
     public virtual ICollection<Asignaciones> Asignaciones { get; set; } = new List<Asignaciones>();
     public virtual ICollection<ListasCerradasGuardadas> ListasCerradasGuardadas { get; set; } = new List<ListasCerradasGuardadas>();
     public virtual ICollection<Notificaciones> Notificaciones { get; set; } = new List<Notificaciones>();
+    public virtual ICollection<Propuestas> Propuestas { get; set; } = new List<Propuestas>();
+
 
     [JsonIgnore] // <-- Esto evita que sea requerido en el binding del controlador
     public virtual Rol? Rol { get; set; }
